@@ -2,8 +2,15 @@ import 'package:flutter/material.dart';
 
 class PharmacyMedicamentsScreen extends StatefulWidget {
   final String pharmacyId;
+  final String pharmacyName;
+  final List<Map<String, dynamic>> pharmacyMedicaments;
 
-  const PharmacyMedicamentsScreen({Key? key, required this.pharmacyId}) : super(key: key);
+  const PharmacyMedicamentsScreen({
+    Key? key,
+    required this.pharmacyId,
+    required this.pharmacyName,
+    required this.pharmacyMedicaments
+  }) : super(key: key);
 
   @override
   _PharmacyMedicamentsScreenState createState() => _PharmacyMedicamentsScreenState();
@@ -12,61 +19,54 @@ class PharmacyMedicamentsScreen extends StatefulWidget {
 class _PharmacyMedicamentsScreenState extends State<PharmacyMedicamentsScreen> {
   late Map<String, dynamic> pharmacy;
   List<Map<String, dynamic>> medicaments = [];
+  List<Map<String, dynamic>> filteredMedicaments = [];
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    // En production, vous récupéreriez les données à partir de l'ID de la pharmacie
     _loadPharmacyData();
+    searchController.addListener(_filterMedicaments);
   }
 
   void _loadPharmacyData() {
-    // Données simulées - À remplacer par une requête API
+    // Utilisation des données passées en paramètre
+    medicaments = List.from(widget.pharmacyMedicaments);
+    filteredMedicaments = List.from(medicaments);
+
+    // Données de base pour la pharmacie
     pharmacy = {
       'id': widget.pharmacyId,
-      'name': 'Pharmacie Happy Ekoumdoum',
-      'address': 'Yaounde, Awaie',
-      'phone': '+237 6 80 45 67 89',
+      'name': widget.pharmacyName,
+      'address': 'Adresse non spécifiée',
+      'phone': '+237 6789878564',
       'open': true,
-      'rating': 4.8,
-      'distance': '0.8 km',
-      'image': 'assets/images/ads5.jpg',
-      'description': 'Pharmacie ouverte 7j/7 24H/24',
+      'rating': 4.5,
+      'distance': 'Distance non spécifiée',
+      'image': 'assets/images/ads2.jpg',
+      'description': 'Pharmacie',
     };
-    medicaments = [
-      {
-        'id': 'med1',
-        'name': 'Doliprane 1000mg',
-        'description': 'Boîte de 16 comprimés',
-        'price': 5.99,
-        'image': 'assets/products/Amoxil.png',
-        'category': 'Douleur',
-      },
-      {
-        'id': 'med2',
-        'name': 'Vitamine C',
-        'description': '30 comprimés effervescents',
-        'price': 8.50,
-        'image': 'assets/products/Robitussin.png',
-        'category': 'Vitamines',
-      },
-      {
-        'id': 'med3',
-        'name': 'Biafine',
-        'description': 'Crème 100g',
-        'price': 7.20,
-        'image': 'assets/products/Lipitor.png',
-        'category': 'Soins',
-      },
-      {
-        'id': 'med4',
-        'name': 'Smecta',
-        'description': 'Sachets - 10 unités',
-        'price': 6.40,
-        'image': 'assets/products/Lantus.png',
-        'category': 'Digestion',
-      },
-    ];
+  }
+
+  void _filterMedicaments() {
+    final query = searchController.text.toLowerCase();
+
+    setState(() {
+      if (query.isEmpty) {
+        filteredMedicaments = List.from(medicaments);
+      } else {
+        filteredMedicaments = medicaments.where((med) {
+          return med['name'].toString().toLowerCase().contains(query) ||
+              med['category'].toString().toLowerCase().contains(query);
+        }).toList();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -74,7 +74,10 @@ class _PharmacyMedicamentsScreenState extends State<PharmacyMedicamentsScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green[700],
-        title: Text(pharmacy['name'], style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+        title: Text(
+          pharmacy['name'],
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
       ),
       body: Column(
         children: [
@@ -160,15 +163,16 @@ class _PharmacyMedicamentsScreenState extends State<PharmacyMedicamentsScreen> {
             ),
           ),
 
-          // Barre de recherche et filtres
+          // Barre de recherche
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
+                    controller: searchController,
                     decoration: InputDecoration(
-                      hintText: 'Rechercher un médicament...',
+                      hintText: 'Rechercher un médicament ou catégorie...',
                       prefixIcon: Icon(Icons.search),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
@@ -187,10 +191,20 @@ class _PharmacyMedicamentsScreenState extends State<PharmacyMedicamentsScreen> {
 
           // Liste des médicaments
           Expanded(
-            child: ListView.builder(
-              itemCount: medicaments.length,
+            child: filteredMedicaments.isEmpty
+                ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Text(
+                  'Aucun médicament trouvé',
+                  style: TextStyle(fontSize: 18, color: Colors.grey),
+                ),
+              ),
+            )
+                : ListView.builder(
+              itemCount: filteredMedicaments.length,
               itemBuilder: (context, index) {
-                return _buildMedicamentCard(medicaments[index]);
+                return _buildMedicamentCard(filteredMedicaments[index]);
               },
             ),
           ),
@@ -281,6 +295,7 @@ class _PharmacyMedicamentsScreenState extends State<PharmacyMedicamentsScreen> {
                   style: ElevatedButton.styleFrom(
                     shape: CircleBorder(),
                     padding: EdgeInsets.all(8),
+                    backgroundColor: Colors.green[700],
                   ),
                   child: Icon(Icons.add, color: Colors.white),
                 ),

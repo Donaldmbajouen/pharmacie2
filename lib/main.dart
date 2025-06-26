@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_projets/Login.dart';
 import 'package:flutter_projets/home.dart';
+import 'package:flutter_projets/welcome_screen.dart';
 
 import 'Navigation.dart';
 
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      home: Login() ,
+      home: WelcomeScreen() ,
     );
   }
 }
