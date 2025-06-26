@@ -38,7 +38,7 @@ class _PharmacyMedicamentsScreenState extends State<PharmacyMedicamentsScreen> {
     pharmacy = {
       'id': widget.pharmacyId,
       'name': widget.pharmacyName,
-      'address': 'Adresse non spécifiée',
+      'address': 'Yaounde, Cameroun',
       'phone': '+237 6789878564',
       'open': true,
       'rating': 4.5,

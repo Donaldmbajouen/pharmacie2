@@ -51,7 +51,7 @@ class WelcomeScreen extends StatelessWidget {
                     const Text(
                       'HomePharma',
                       style: TextStyle(
-                        fontSize: 50,
+                        fontSize: 30,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                         letterSpacing: 1.2,
@@ -59,15 +59,6 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                     // Icon(Icons.attach_money_sharp),
                     const SizedBox(height: 30),
-                    const Text(
-                      '',
-                      style: TextStyle(
-                        fontSize: 36,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
                     const SizedBox(height: 10),
                     const Text(
                       'Recherchez vos medicaments dans les Pharmacies les plus proches de vous',
